@@ -1,0 +1,32 @@
+{
+    "bundles": [
+        {
+            "name": "symbols",
+            "assets": [
+                { "name": "Wild", "srcs": "assets/symbols/Wild.png" },
+                { "name": "Scatter", "srcs": "assets/symbols/Scatter.png" },
+                { "name": "A", "srcs": "assets/symbols/A.png" },
+                { "name": "K", "srcs": "assets/symbols/K.png" },
+                { "name": "Q", "srcs": "assets/symbols/Q.png" },
+                { "name": "J", "srcs": "assets/symbols/J.png" },
+                { "name": "10", "srcs": "assets/symbols/10.png" },
+                { "name": "9", "srcs": "assets/symbols/9.png" },
+                { "name": "Ruby", "srcs": "assets/symbols/Ruby.png" },
+                { "name": "Diamond", "srcs": "assets/symbols/Diamond.png" },
+                { "name": "Coin", "srcs": "assets/symbols/Coin.png" }
+            ]
+        },
+        {
+            "name": "background",
+            "assets": [
+                { "name": "background", "srcs": "assets/background/temple_bg.png" }
+            ]
+        },
+        {
+            "name": "character",
+            "assets": [
+                { "name": "aurora", "srcs": "assets/character/aurora.png" }
+            ]
+        }
+    ]
+}

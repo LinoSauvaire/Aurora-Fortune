@@ -1,0 +1,24 @@
+{
+  "name": "slot-game-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A modern, modular, and optimized slot machine game engine.",
+  "scripts": {
+    "dev": "concurrently \"npm:dev-client\" \"npm:dev-server\"",
+    "dev-client": "cd client && npm run dev",
+    "dev-server": "cd server && npm run dev",
+    "postinstall": "cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": [
+    "slot-machine",
+    "igaming",
+    "html5",
+    "typescript",
+    "pixijs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+  password  String
+  wallet    Wallet?
+  sessions  Session[]
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  balance   Float
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+}
+
+model Spin {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  userId    String
+  bet       Float
+  win       Float
+  symbols   Json
+  isBonus   Boolean
+  replay    Replay?
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  amount    Float
+  type      String // "bet", "win", "deposit", "withdrawal"
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+}
+
+model Bonus {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  type      String // "freeSpins", etc.
+  userId    String
+  isActive  Boolean
+}
+
+model Replay {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  spinId    String   @unique
+  spin      Spin     @relation(fields: [spinId], references: [id])
+  data      Json
+}

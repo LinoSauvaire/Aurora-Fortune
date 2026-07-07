@@ -1,0 +1,20 @@
+{
+    "bundles": [
+        {
+            "name": "symbols",
+            "assets": [
+                { "name": "Wild", "srcs": "assets/symbols/Wild.svg" },
+                { "name": "Scatter", "srcs": "assets/symbols/Scatter.svg" },
+                { "name": "A", "srcs": "assets/symbols/A.svg" },
+                { "name": "K", "srcs": "assets/symbols/K.svg" },
+                { "name": "Q", "srcs": "assets/symbols/Q.svg" },
+                { "name": "J", "srcs": "assets/symbols/J.svg" },
+                { "name": "10", "srcs": "assets/symbols/10.svg" },
+                { "name": "9", "srcs": "assets/symbols/9.svg" },
+                { "name": "Ruby", "srcs": "assets/symbols/Ruby.svg" },
+                { "name": "Diamond", "srcs": "assets/symbols/Diamond.svg" },
+                { "name": "Coin", "srcs": "assets/symbols/Coin.svg" }
+            ]
+        }
+    ]
+}
