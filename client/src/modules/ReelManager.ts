@@ -6,6 +6,7 @@ import { AURORA_THEME } from '../theme/auroraTheme';
 export interface ReelConfig {
     index: number;
     x: number;
+    y: number;
     symbolSize: number;
     visibleRows: number;
     reelStrip: string[];
@@ -34,7 +35,7 @@ export class ReelManager {
     public init(reelStrips: string[][], startX: number, startY: number): void {
         const reelCount = reelStrips.length;
         const totalWidth = reelCount * this.symbolSize + (reelCount - 1) * this.spacing;
-        const originX = startX - totalWidth / 2;
+        const originX = startX - totalWidth / 2 + this.symbolSize / 2;
 
         for (let i = 0; i < reelCount; i++) {
             const reelContainer = new PIXI.Container();
@@ -57,6 +58,7 @@ export class ReelManager {
             const config: ReelConfig = {
                 index: i,
                 x: reelContainer.x,
+                y: reelContainer.y,
                 symbolSize: this.symbolSize,
                 visibleRows: this.visibleRows,
                 reelStrip: reelStrips[i],
@@ -85,6 +87,10 @@ export class ReelManager {
             if (!reel) { resolve(); return; }
             reel.spinning = true;
 
+            for (const symbol of reel.symbols) {
+                symbol.setSpinState(true);
+            }
+
             const strip = reel.config.reelStrip;
             const symHeight = this.symbolSize;
             const spinDistance = symHeight * (20 + reelIndex * 4);
@@ -94,7 +100,7 @@ export class ReelManager {
                 const randSym = strip[Math.floor(Math.random() * strip.length)];
                 const recycled = reel.symbols.shift();
                 if (recycled) {
-                    recycled.updateSymbol(randSym);
+                    recycled.updateSymbol(randSym, true);
                     const lastY = reel.symbols.length > 0
                         ? reel.symbols[reel.symbols.length - 1].container.y
                         : 0;
@@ -106,7 +112,7 @@ export class ReelManager {
             for (let f = 0; f < finalSymbols.length; f++) {
                 const recycled = reel.symbols.shift();
                 if (recycled) {
-                    recycled.updateSymbol(finalSymbols[f]);
+                    recycled.updateSymbol(finalSymbols[f], true);
                     const lastY = reel.symbols.length > 0
                         ? reel.symbols[reel.symbols.length - 1].container.y
                         : 0;
@@ -121,9 +127,19 @@ export class ReelManager {
             gsap.to(reel.container, {
                 y: endY,
                 duration: duration / 1000,
-                ease: 'power4.out',
+                ease: 'power3.out',
+                onUpdate: () => {
+                    const progress = Math.min(Math.max((reel.container.y - endY) / Math.max(spinDistance, 1), 0), 1);
+                    const blur = 3 + progress * 5;
+                    for (const symbol of reel.symbols) {
+                        symbol.setBlur(blur);
+                    }
+                },
                 onComplete: () => {
                     this.snapReel(reel, finalSymbols);
+                    for (const symbol of reel.symbols) {
+                        symbol.setSpinState(false);
+                    }
                     reel.spinning = false;
                     resolve();
                 },
@@ -146,8 +162,9 @@ export class ReelManager {
                 const randSym = reel.config.reelStrip[Math.floor(Math.random() * reel.config.reelStrip.length)];
                 sym.updateSymbol(randSym);
             }
+            sym.setBlur(0);
         }
-        reel.container.y = 0;
+        reel.container.y = reel.config.y;
     }
 
     public getVisibleSymbols(): string[][] {

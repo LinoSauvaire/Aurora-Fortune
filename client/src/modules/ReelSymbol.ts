@@ -12,27 +12,49 @@ export class ReelSymbol {
         this.name = name;
         this.size = size;
         this.container = new PIXI.Container();
-        
+
         this.sprite = new PIXI.Sprite();
         this.sprite.anchor.set(0.5);
         this.container.addChild(this.sprite);
-        
+
         this.updateSymbol(name);
     }
 
-    public updateSymbol(newName: string): void {
+    public updateSymbol(newName: string, animate: boolean = false): void {
         this.name = newName;
         try {
             // Get texture from Assets
             const texture = PIXI.Assets.get(newName);
             if (texture) {
                 this.sprite.texture = texture;
-                
+
                 // Scale sprite to fit the target size
                 const maxDim = Math.max(texture.width, texture.height);
                 const scale = (this.size * 0.85) / maxDim; // Keep 15% margin
                 this.sprite.scale.set(scale);
                 this.baseScale = scale;
+
+                if (animate) {
+                    import('gsap').then(({ gsap }) => {
+                        gsap.killTweensOf(this.sprite);
+                        gsap.killTweensOf(this.sprite.scale);
+
+                        this.sprite.alpha = 0;
+                        this.sprite.scale.set(scale * 0.75);
+
+                        gsap.to(this.sprite, {
+                            alpha: 1,
+                            duration: 0.18,
+                            ease: 'power1.out',
+                        });
+                        gsap.to(this.sprite.scale, {
+                            x: scale,
+                            y: scale,
+                            duration: 0.32,
+                            ease: 'back.out(1.8)',
+                        });
+                    });
+                }
             } else {
                 console.warn(`Texture not found for symbol: ${newName}`);
             }
@@ -103,6 +125,28 @@ export class ReelSymbol {
                 this.sprite.alpha = 1;
             });
         }
+    }
+
+    public setSpinState(active: boolean): void {
+        import('gsap').then(({ gsap }) => {
+            gsap.killTweensOf(this.container);
+            gsap.killTweensOf(this.sprite);
+            gsap.killTweensOf(this.sprite.scale);
+
+            if (active) {
+                gsap.to(this.container, {
+                    angle: (Math.random() - 0.5) * 3,
+                    duration: 0.12,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'sine.inOut',
+                });
+                this.setBlur(3.5);
+            } else {
+                this.container.angle = 0;
+                this.setBlur(0);
+            }
+        });
     }
 
     public destroy(): void {
